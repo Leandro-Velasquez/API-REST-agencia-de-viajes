@@ -8,7 +8,7 @@ class Json {
     }
 
     public static function convertirJsonAFormatoObject(string $dataJson) {
-
+        return json_decode($dataJson, false);
     }
 
     public static function convertirJsonAFormatoArrayAsociativo(string $dataJson) {
