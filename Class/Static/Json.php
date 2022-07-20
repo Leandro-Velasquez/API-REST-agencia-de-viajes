@@ -12,7 +12,7 @@ class Json {
     }
 
     public static function convertirJsonAFormatoArrayAsociativo(string $dataJson) {
-
+        return json_decode($dataJson, true);
     }
 }
 ?>
