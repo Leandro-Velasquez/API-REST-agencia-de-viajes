@@ -23,10 +23,20 @@ class Request {
 
     }
 
+    /**
+     * Devuelve la uri de la request
+     *
+     * @return string
+     */
     private static function getUri() {
         return $_SERVER['REQUEST_URI'];
     }
 
+    /**
+     * Devuelve la uri de la request en un array donde cada parte de la uri es un elemento del array
+     *
+     * @return array
+     */
     private static function getUriInArray() {
         $keys = array('api', 'service', 'resourceId');
         $values = explode('/', trim(self::getUri(), '/'));
