@@ -2,10 +2,6 @@
 namespace Class\Static;
 
 class Request {
-    
-    public static function getUri() {
-
-    }
 
     public static function getService() {
 
@@ -25,5 +21,9 @@ class Request {
 
     public static function checkIfThereARequest() {
 
+    }
+
+    private static function getUri() {
+        return $_SERVER['REQUEST_URI'];
     }
 }
