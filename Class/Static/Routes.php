@@ -70,7 +70,7 @@ class Routes {
      * @return array
      */
     public static function getAvailableRoutes(string $method) {
-        return self::$routes[strtoupper($method)];
+        return self::getAllEndPoints(self::$routes[strtoupper($method)]);
     }
 
     /**
@@ -84,6 +84,20 @@ class Routes {
     private static function addRoute(string $httpMethod, string $route, array $serviceClassAndMethod) {
         $arrayKeys = array('service', 'method');
         array_push(self::$routes[strtoupper($httpMethod)], ['endPoint' => $route, 'serviceAndMethod' => array_combine($arrayKeys, $serviceClassAndMethod)]);
+    }
+
+    /**
+     * Obtiene todos los endPoints de un array perteneciente a uno de los metodos http aceptados por el servidor
+     *
+     * @param array $arrayRoutes
+     * @return array
+     */
+    private static function getAllEndPoints(array $arrayRoutes) {
+        $newArray = [];
+        foreach($arrayRoutes as $dataRoute) {
+            array_push($newArray, $dataRoute['endPoint']);
+        }
+        return $newArray;
     }
 }
 ?>
