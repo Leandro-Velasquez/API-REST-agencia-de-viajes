@@ -3,7 +3,7 @@ namespace Class\Static;
 
 class Routes {
 
-    static array $routes = [
+    private static array $routes = [
         'GET' => [],
         'POST' => [],
         'PUT' => [],
@@ -52,6 +52,15 @@ class Routes {
      */
     public static function delete(string $route, array $serviceClassAndMethod) {
         self::addRoute('DELETE', $route, $serviceClassAndMethod);
+    }
+
+    /**
+     * Obtiene los metodos http que se encuentran disponibles en la api
+     *
+     * @return array
+     */
+    public static function getAvailableHttpMethods() {
+        return array_keys(self::$routes);
     }
 
     /**
