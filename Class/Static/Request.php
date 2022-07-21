@@ -26,4 +26,10 @@ class Request {
     private static function getUri() {
         return $_SERVER['REQUEST_URI'];
     }
+
+    private static function getUriInArray() {
+        $keys = array('api', 'service', 'resourceId');
+        $values = explode('/', trim(self::getUri(), '/'));
+        return array_combine($keys, $values);
+    }
 }
