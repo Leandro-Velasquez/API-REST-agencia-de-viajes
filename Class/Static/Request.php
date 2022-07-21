@@ -25,8 +25,13 @@ class Request {
         }
     }
 
+    /**
+     * Obtiene el metodo http de la request
+     *
+     * @return string
+     */
     public static function getHttpMethod() {
-
+        return $_SERVER['REQUEST_METHOD'];
     }
 
     public static function getBody() {
