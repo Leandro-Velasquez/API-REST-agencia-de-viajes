@@ -3,12 +3,26 @@ namespace Class\Static;
 
 class Request {
 
+    private static $maxLengthId = 7;
+
+    /**
+     * Obtiene el nombre del servicio(clase) que fue llamado
+     *
+     * @return string
+     */
     public static function getService() {
         return self::getUriInArray()['service'];
     }
 
+    /**
+     * Obtiene el id del recurso solicitado en la request
+     *
+     * @return string
+     */
     public static function getId() {
-
+        if(is_numeric(self::getUriInArray()['id']) && !(strpos(self::getUriInArray()['id'], '.') || strpos(self::getUriInArray()['id'], ',')) && strlen(self::getUriInArray()['id']) <= self::$maxLengthId) {
+            return self::getUriInArray()['id'];
+        }
     }
 
     public static function getHttpMethod() {
@@ -38,7 +52,7 @@ class Request {
      * @return array
      */
     private static function getUriInArray() {
-        $keys = array('api', 'service', 'resourceId');
+        $keys = array('api', 'service', 'id');
         $values = explode('/', trim(self::getUri(), '/'));
         return array_combine($keys, $values);
     }
