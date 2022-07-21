@@ -4,7 +4,7 @@ namespace Class\Static;
 class Request {
 
     public static function getService() {
-
+        return self::getUriInArray()['service'];
     }
 
     public static function getId() {
