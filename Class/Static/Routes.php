@@ -64,6 +64,16 @@ class Routes {
     }
 
     /**
+     * Retorna un array que contiene todas las rutas existentes para uno de los metodos http disponibles en la api rest
+     *
+     * @param string $method
+     * @return array
+     */
+    public static function getAvailableRoutes(string $method) {
+        return self::$routes[strtoupper($method)];
+    }
+
+    /**
      * Agrega un array de elementos dentro del atributo estatico de clase $routes
      *
      * @param string $httpMethod
