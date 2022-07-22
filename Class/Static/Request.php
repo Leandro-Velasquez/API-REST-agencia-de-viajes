@@ -40,15 +40,18 @@ class Request {
     }
 
     public static function checkIfThereARequest() {
-        
+
     }
 
     /**
-     * Devuelve la uri de la request
+     * Devuelve la uri de la request, si le pasamos true como argumento nos devuelve la uri completa incluido el directorio del proyecto
      *
      * @return string
      */
-    private static function getUri() {
+    public static function getUri(bool $boolean=false) {
+        if(!$boolean) {
+            return preg_replace('/'.'^\/.*?\/'.'/', '', $_SERVER['REQUEST_URI']);
+        }
         return $_SERVER['REQUEST_URI'];
     }
 
