@@ -59,6 +59,15 @@ class Server {
     }
 
     /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public static function getAllHeadersRequest() {
+        return getallheaders();
+    }
+
+    /**
      * Devuelve la uri de la request en un array donde cada parte de la uri es un elemento del array
      *
      * @return array
