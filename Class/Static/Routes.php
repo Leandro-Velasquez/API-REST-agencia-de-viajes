@@ -74,6 +74,22 @@ class Routes {
     }
 
     /**
+     * Obtiene un array que contiene nombre del controller y metodo encargados de administrar el endpoint enviado en la request
+     *
+     * @param string $method
+     * @param string $route
+     * @return array
+     */
+    public static function getRouteData(string $method, string $route) {
+        //self::$routes[strtoupper($method)];
+        foreach(self::$routes[strtoupper($method)] as $x) {
+            if($x["endPoint"] === $route) {
+                return $x["controllerAndMethod"];
+            }
+        }
+    }
+
+    /**
      * Agrega un array de elementos dentro del atributo estatico de clase $routes
      *
      * @param string $httpMethod
@@ -82,8 +98,8 @@ class Routes {
      * @return void
      */
     private static function addRoute(string $httpMethod, string $route, array $serviceClassAndMethod) {
-        $arrayKeys = array('service', 'method');
-        array_push(self::$routes[strtoupper($httpMethod)], ['endPoint' => $route, 'serviceAndMethod' => array_combine($arrayKeys, $serviceClassAndMethod)]);
+        $arrayKeys = array('controller', 'method');
+        array_push(self::$routes[strtoupper($httpMethod)], ['endPoint' => $route, 'controllerAndMethod' => array_combine($arrayKeys, $serviceClassAndMethod)]);
     }
 
     /**
