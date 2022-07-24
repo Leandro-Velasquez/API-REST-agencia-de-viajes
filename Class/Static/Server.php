@@ -22,7 +22,7 @@ class Server {
      */
     public static function getBody() {
         $raw = file_get_contents('php://input');
-        return Json::convertirJsonAFormatoArrayAsociativo($raw);
+        return JsonConverter::convertJsonToArray($raw);
     }
 
     /**
