@@ -19,17 +19,23 @@ class ClientesRepository {
 
     }
 
-    public static function insert($dni, $nombre, $apellido, $idVuelo) {
-        $sql = 'INSERT INTO ' . self::$table . ' (dni, nombre, apellido, id_vuelo) VALUES (:dni, :nombre, :apellido, :idVuelo)';
+    public static function insert($nombre, $apellido, $dni, $idVuelo) {
+        $sql = 'INSERT INTO ' . self::$table . ' (nombre, apellido, dni,id_vuelo) VALUES (:nombre, :apellido, :dni, :idVuelo)';
 
         $stmt = DB::connect()->prepare($sql);
 
-        $stmt->bindParam(':dni', $dni);
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':apellido', $apellido);
+        $stmt->bindParam(':dni', $dni);
         $stmt->bindParam(':idVuelo', $idVuelo);
 
         return $stmt->execute();
+    }
+
+    public static function lastId() {
+        $sql = 'SELECT MAX(id) as id FROM ' . self::$table;
+        $stmt = DB::connect()->query($sql);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
     }
 }
 
