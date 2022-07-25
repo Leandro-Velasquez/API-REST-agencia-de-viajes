@@ -3,6 +3,5 @@ namespace Class\Static;
 
 class Json {
 
-    
 }
 ?>
