@@ -19,15 +19,16 @@ class ClientesRepository {
 
     }
 
-    public static function insert($nombre, $apellido, $dni, $idVuelo) {
-        $sql = 'INSERT INTO ' . self::$table . ' (nombre, apellido, dni,id_vuelo) VALUES (:nombre, :apellido, :dni, :idVuelo)';
+    public static function insert(array $data) {
+        extract($data);
+        $sql = 'INSERT INTO ' . self::$table . ' (nombre, apellido, dni,id_vuelo) VALUES (:nombre, :apellido, :dni, :id_vuelo)';
 
         $stmt = DB::connect()->prepare($sql);
 
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':apellido', $apellido);
         $stmt->bindParam(':dni', $dni);
-        $stmt->bindParam(':idVuelo', $idVuelo);
+        $stmt->bindParam(':id_vuelo', $id_vuelo);
 
         return $stmt->execute();
     }
