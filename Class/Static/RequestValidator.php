@@ -12,7 +12,7 @@ class RequestValidator {
      * @return bool
      */
     public static function checkRoute(string $method, string $route) {
-        if(self::checkMethod($method)) {
+        if(self::checkMethodHttp($method)) {
             foreach(Routes::getAvailableRoutes($method) as $endpoint) {
                 if($endpoint === $route) {
                     return true;
@@ -28,7 +28,7 @@ class RequestValidator {
      * @param string $method
      * @return bool
      */
-    public static function checkMethod(string $method) {
+    public static function checkMethodHttp(string $method) {
         return in_array(strtoupper($method), Routes::getAvailableHttpMethods());
     }
 }
