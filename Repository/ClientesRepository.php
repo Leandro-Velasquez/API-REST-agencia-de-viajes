@@ -19,8 +19,17 @@ class ClientesRepository {
 
     }
 
-    public static function insert() {
+    public static function insert($dni, $nombre, $apellido, $idVuelo) {
+        $sql = 'INSERT INTO ' . self::$table . ' (dni, nombre, apellido, id_vuelo) VALUES (:dni, :nombre, :apellido, :idVuelo)';
 
+        $stmt = DB::connect()->prepare($sql);
+
+        $stmt->bindParam(':dni', $dni);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':apellido', $apellido);
+        $stmt->bindParam(':idVuelo', $idVuelo);
+
+        return $stmt->execute();
     }
 }
 
