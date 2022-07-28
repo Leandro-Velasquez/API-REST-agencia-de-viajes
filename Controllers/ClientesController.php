@@ -13,12 +13,15 @@ class ClientesController {
         return $r;
     }
 
-    public function getClientById() {
+    public function getClientById($id) {
 
     }
 
-    public function registerClient() {
-
+    public function registerClient($req) {
+        $id = ClientesRepository::insert($req->body)?ClientesRepository::lastId():null;
+        $statusCode = $id ? 201: 501;
+        $r = new Response(array('Content-Type:application/json'), $statusCode, JsonConverter::convertToJson(array('id'=>$id)));
+        return $r;
     }
 }
 ?>
