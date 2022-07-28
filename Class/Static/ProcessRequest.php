@@ -10,7 +10,7 @@ class ProcessRequest {
         if(self::validate($request)) {
             extract(Routes::getRouteData($request->methodHttp, $request->uri));
             $obj = new $controller;
-            $response = call_user_func_array(array($obj, $method), array());
+            $response = call_user_func_array(array($obj, $method), array($request));
             return $response;
         }
     }
