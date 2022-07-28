@@ -3,11 +3,11 @@ namespace Class\Static;
 
 class Routes {
 
-    private static array $routes = [
-        'GET' => [],
-        'POST' => [],
-        'PUT' => [],
-        'DELETE' => []
+    public static array $routes = [
+        'GET' => ['variable'=>[], 'noVariable'=>[]],
+        'POST' => ['variable'=>[], 'noVariable'=>[]],
+        'PUT' => ['variable'=>[], 'noVariable'=>[]],
+        'DELETE' => ['variable'=>[], 'noVariable'=>[]]
     ];
 
     /**
@@ -83,7 +83,7 @@ class Routes {
     public static function getRouteData(string $method, string $route) {
         //self::$routes[strtoupper($method)];
         foreach(self::$routes[strtoupper($method)] as $x) {
-            if($x["endPoint"] === $route) {
+            if($x["route"] === $route) {
                 return $x["controllerAndMethod"];
             }
         }
@@ -99,7 +99,9 @@ class Routes {
      */
     private static function addRoute(string $httpMethod, string $route, array $serviceClassAndMethod) {
         $arrayKeys = array('controller', 'method');
-        array_push(self::$routes[strtoupper($httpMethod)], ['endPoint' => $route, 'controllerAndMethod' => array_combine($arrayKeys, $serviceClassAndMethod)]);
+        $pattern = '/' . '\{[a-zA-Z_]+[a-zA-Z0-9_]+\}' . '/';
+        $option = preg_match($pattern, $route)?'variable':'noVariable';
+        array_push(self::$routes[strtoupper($httpMethod)][$option], ['route' => $route, 'controllerAndMethod' => array_combine($arrayKeys, $serviceClassAndMethod)]);
     }
 
     /**
@@ -109,11 +111,29 @@ class Routes {
      * @return array
      */
     private static function getAllEndPoints(array $arrayRoutes) {
+        //Verificar este metodo, produce un error
         $newArray = [];
+        echo "<pre>";
+        var_dump($arrayRoutes['variable'], $arrayRoutes['noVariables']);exit;
         foreach($arrayRoutes as $dataRoute) {
-            array_push($newArray, $dataRoute['endPoint']);
+            array_push($newArray, $dataRoute['route']);
         }
         return $newArray;
+    }
+
+    /**
+     * Verifica si la ruta contiene valores variables en ciertas partes de su estructura
+     *
+     * @param string $route
+     * @return boolean
+     */
+    private static function checkRouteIsVariable(string $route):bool {
+        $pattern = '/' . '\{[a-zA-Z_]+[a-zA-Z0-9_]+\}' . '/';
+        if(preg_match($pattern, $route)) {
+            return true;
+        }else {
+            return false;
+        }
     }
 }
 ?>
