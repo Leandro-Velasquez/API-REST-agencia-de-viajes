@@ -3,11 +3,22 @@ namespace Class\Static;
 
 class Routes {
 
-    public static array $routes = [
-        'GET' => ['variable'=>[], 'noVariable'=>[]],
-        'POST' => ['variable'=>[], 'noVariable'=>[]],
-        'PUT' => ['variable'=>[], 'noVariable'=>[]],
-        'DELETE' => ['variable'=>[], 'noVariable'=>[]]
+    private const NAME_ROUTES_VARIABLES = 'variable';
+    private const NAME_ROUTES_NO_VARIABLES = 'noVariable';
+
+    private static array $routes = [
+        'GET' => [
+            self::NAME_ROUTES_VARIABLES=>[], self::NAME_ROUTES_NO_VARIABLES=>[]
+        ],
+        'POST' => [
+            self::NAME_ROUTES_VARIABLES=>[], self::NAME_ROUTES_NO_VARIABLES=>[]
+        ],
+        'PUT' => [
+            self::NAME_ROUTES_VARIABLES=>[], self::NAME_ROUTES_NO_VARIABLES=>[]
+        ],
+        'DELETE' => [
+            self::NAME_ROUTES_VARIABLES=>[], self::NAME_ROUTES_NO_VARIABLES=>[]
+            ]
     ];
 
     /**
@@ -113,8 +124,6 @@ class Routes {
     private static function getAllEndPoints(array $arrayRoutes) {
         //Verificar este metodo, produce un error
         $newArray = [];
-        echo "<pre>";
-        var_dump($arrayRoutes['variable'], $arrayRoutes['noVariables']);exit;
         foreach($arrayRoutes as $dataRoute) {
             array_push($newArray, $dataRoute['route']);
         }
@@ -133,6 +142,22 @@ class Routes {
             return true;
         }else {
             return false;
+        }
+    }
+
+    public static function getThePossibleRoutes(string $methodHttpRequest, string $routeRequest) {
+        if(!self::checkRouteIsVariable($routeRequest)) {
+            $array = [];
+            foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_NO_VARIABLES] as $r) {
+                array_push($array, $r['route']);
+            }
+            return $array;
+        }else {
+            $array = [];
+            foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_VARIABLES] as $r) {
+                array_push($array, $r['route']);
+            }
+            return $array;
         }
     }
 }
