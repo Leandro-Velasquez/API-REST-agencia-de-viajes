@@ -160,5 +160,21 @@ class Routes {
             return $array;
         }
     }
+
+    private static function getAllRoutesVariables(string $methodHttpRequest) {
+        $array = [];
+        foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_VARIABLES] as $r) {
+            array_push($array, $r['route']);
+        }
+        return $array;
+    }
+
+    private static function getAllRoutesNoVariables(string $methodHttpRequest) {
+        $array = [];
+        foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_NO_VARIABLES] as $r) {
+            array_push($array, $r['route']);
+        }
+        return $array;
+    }
 }
 ?>
