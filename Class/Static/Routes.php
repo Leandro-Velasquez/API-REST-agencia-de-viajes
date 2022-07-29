@@ -91,9 +91,8 @@ class Routes {
      * @param string $route
      * @return array
      */
-    public static function getRouteData(string $method, string $route) {
-        //self::$routes[strtoupper($method)];
-        foreach(self::$routes[strtoupper($method)] as $x) {
+    public static function getRouteData(string $method, string $name, string $route) {
+        foreach(self::$routes[strtoupper($method)][$name] as $x) {
             if($x["route"] === $route) {
                 return $x["controllerAndMethod"];
             }
@@ -158,6 +157,20 @@ class Routes {
                 array_push($array, $r['route']);
             }
             return $array;
+        }
+    }
+
+    public static function getControllerAndMethodRouteRequest(string $methodHttpRequest, string $routeRequest) {
+        if(in_array($routeRequest, self::getAllRoutesNoVariables($methodHttpRequest))) {
+            return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_NO_VARIABLES, $routeRequest);
+        }else {
+            foreach(self::getAllRoutesVariables($methodHttpRequest) as $route) {
+                $arrayRoute = explode('/', $route);
+                $arrayRouteRequest = explode('/', $routeRequest);
+                if(count($arrayRoute) === count($arrayRouteRequest) && $arrayRoute[0] == $arrayRouteRequest[0]) {
+                    return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
+                }
+            }
         }
     }
 
