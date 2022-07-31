@@ -167,8 +167,25 @@ class Routes {
             foreach(self::getAllRoutesVariables($methodHttpRequest) as $route) {
                 $arrayRoute = explode('/', $route);
                 $arrayRouteRequest = explode('/', $routeRequest);
-                if(count($arrayRoute) === count($arrayRouteRequest) && $arrayRoute[0] == $arrayRouteRequest[0]) {
-                    return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
+                if(count(array_intersect($arrayRoute, $arrayRouteRequest)) == 2) {
+                    $arrayDiff = array_diff($arrayRouteRequest, $arrayRoute);
+
+                    $variableValue = array_pop($arrayDiff);
+
+                    $arrayContentMethodAndController = self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
+
+                    $arrayContentMethodAndController['variables'] = $variableValue;
+
+                    return $arrayContentMethodAndController;
+                }else if(count(array_intersect($arrayRoute, $arrayRouteRequest)) == 1) {
+                    $arrayDiff = array_diff($arrayRouteRequest, $arrayRoute);
+                    $variableValue = array_pop($arrayDiff);
+
+                    $arrayContentMethodAndController = self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
+
+                    $arrayContentMethodAndController['variables'] = $variableValue;
+
+                    return $arrayContentMethodAndController;
                 }
             }
         }
