@@ -174,25 +174,27 @@ class Routes {
             $arrayRouteVariable = explode('/', $routeVariable);
 
             if(count(array_intersect($arrayRouteVariable, $arrayRouteRequest)) == 2) {
-                $arrayDiff = array_diff($arrayRouteRequest, $arrayRouteVariable);
-                $variableValue = array_pop($arrayDiff);
 
                 $arrayContentMethodAndController = self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $routeVariable);
 
-                $arrayContentMethodAndController['variables'] = $variableValue;
+                $arrayContentMethodAndController['variables'] = self::getVariableInRouteRequest($arrayRouteRequest, $arrayRouteVariable);
 
                 return $arrayContentMethodAndController;
             }else if(count(array_intersect($arrayRouteVariable, $arrayRouteRequest)) == 1) {
-                $arrayDiff = array_diff($arrayRouteRequest, $arrayRouteVariable);
-                $variableValue = array_pop($arrayDiff);
 
                 $arrayContentMethodAndController = self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $routeVariable);
 
-                $arrayContentMethodAndController['variables'] = $variableValue;
+                $arrayContentMethodAndController['variables'] = self::getVariableInRouteRequest($arrayRouteRequest, $arrayRouteVariable);
 
                 return $arrayContentMethodAndController;
             }
         }
+    }
+
+    private static function getVariableInRouteRequest(array $arrayRouteRequest, array $arrayRouteVariable) {
+        $arrayDiff = array_diff($arrayRouteRequest, $arrayRouteVariable);
+        $variableValue = array_pop($arrayDiff);
+        return $variableValue;
     }
 
     private static function getAllRoutesVariables(string $methodHttpRequest) {
