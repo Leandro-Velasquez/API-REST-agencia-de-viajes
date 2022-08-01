@@ -182,13 +182,17 @@ class Routes {
                 return $arrayContentMethodAndController;
             }else if(count(array_intersect($arrayRouteVariable, $arrayRouteRequest)) == 1) {
 
-                $arrayContentMethodAndController = self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $routeVariable);
+                $arrayContentMethodAndController = self::getNameControllerAndMethod($methodHttpRequest, $routeVariable);
 
                 $arrayContentMethodAndController['variables'] = self::getVariableInRouteRequest($arrayRouteRequest, $arrayRouteVariable);
 
                 return $arrayContentMethodAndController;
             }
         }
+    }
+
+    private static function getNameControllerAndMethod(string $methodHttpRequest, string $route):array {
+        return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
     }
 
     private static function getVariableInRouteRequest(array $arrayRouteRequest, array $arrayRouteVariable) {
