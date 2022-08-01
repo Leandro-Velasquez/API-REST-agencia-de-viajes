@@ -191,17 +191,39 @@ class Routes {
         }
     }
 
+    /**
+     * Obtiene el nombre del controlador y metodo solicitado en la request, no acepta valores constantes solo urls con variables.
+     * clientes/delete/1 NO
+     * clientes/delete/{id} SI
+     *
+     * @param string $methodHttpRequest
+     * @param string $route
+     * @return array
+     */
     private static function getNameControllerAndMethod(string $methodHttpRequest, string $route):array {
         return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
     }
 
-    private static function getVariableInRouteRequest(array $arrayRouteRequest, array $arrayRouteVariable) {
+    /**
+     * Obtiene el valor variable en la url enviada en la request
+     *
+     * @param array $arrayRouteRequest
+     * @param array $arrayRouteVariable
+     * @return string
+     */
+    private static function getVariableInRouteRequest(array $arrayRouteRequest, array $arrayRouteVariable):string {
         $arrayDiff = array_diff($arrayRouteRequest, $arrayRouteVariable);
         $variableValue = array_pop($arrayDiff);
         return $variableValue;
     }
 
-    private static function getAllRoutesVariables(string $methodHttpRequest) {
+    /**
+     * Obtiene todas las rutas que aceptan variables de uno de los metodos http
+     *
+     * @param string $methodHttpRequest
+     * @return array
+     */
+    private static function getAllRoutesVariables(string $methodHttpRequest):array {
         $array = [];
         foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_VARIABLES] as $r) {
             array_push($array, $r['route']);
@@ -209,7 +231,13 @@ class Routes {
         return $array;
     }
 
-    private static function getAllRoutesNoVariables(string $methodHttpRequest) {
+    /**
+     * Obtiene todas las rutas que no poseen variables de uno de los metodos http
+     *
+     * @param string $methodHttpRequest
+     * @return array
+     */
+    private static function getAllRoutesNoVariables(string $methodHttpRequest):array {
         $array = [];
         foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_NO_VARIABLES] as $r) {
             array_push($array, $r['route']);
