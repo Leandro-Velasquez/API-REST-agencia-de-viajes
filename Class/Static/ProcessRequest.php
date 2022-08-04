@@ -8,17 +8,24 @@ class ProcessRequest {
 
     public static function process(Request $request) {
         if(self::validate($request)) {
-            /*extract(Routes::getRouteData($request->methodHttp, $request->uri));
-            $obj = new $controller;
-            $response = call_user_func_array(array($obj, $method), array($request));
-            return $response;*/
+            $routeApi = self::searchRoute($request);
+            extract(Routes::getControllerAndMethod($request->methodHttp, $routeApi, self::containsVariables($request->uri)));
+            $id = self::getVariableValue($request->uri);
 
+            $obj = new $controller;
+            if(self::containsVariables($request->uri)) {
+                $response = call_user_func_array(array($obj, $method), array('id'=>$id));
+            }else {
+                $response = call_user_func_array(array($obj, $method), array());
+            }
+            
+            return $response;
         }
     }
 
     private static function validate(Request $request) {
         if(RequestValidator::checkMethodHttp($request->methodHttp)) {
-            if(RequestValidator::checkRoute($request->methodHttp, $request->uri)) {
+            if(self::searchRoute($request)) {
                 return true;
             }
             else {
@@ -32,9 +39,60 @@ class ProcessRequest {
     }
 
 
+    /**
+     * Comprueba si la ruta enviada en la request se encuentra definida en la api de ser asi devuelve la ruta almacenada en el server caso contrario devuelve false
+     *
+     * @param Request $request
+     * @return void
+     */
+    private static function searchRoute(Request $request) {
+        if(self::containsVariables($request->uri)) {
+            $routes = Routes::getAllRoutesVariables($request->methodHttp);
+            foreach($routes as $route) {
+                if($route === self::replaceNumber('{'.self::getNameVariable($route).'}', $request->uri)) {
+                    return $route;
+                }
+            }
+        }else if(!self::containsVariables($request->uri)) {
+            $routes = Routes::getAllRoutesNoVariables($request->methodHttp);
+            foreach($routes as $route) {
+                if($route === $request->uri) {
+                    return $route;
+                }
+            }
+        }else {
+            return false;
+        }
+    }
 
+    /**
+     * Reemplaza los numeros en una ruta por un nuevo valor
+     *
+     * @param string $newValue
+     * @param string $string
+     * @return void
+     */
+    private static function replaceNumber(string $newValue, string $string) {
+        $s = explode('/', $string);
+        foreach($s as &$x) {
+            if(is_numeric($x)) {
+                $x = $newValue;
+            }
+        }
+        return implode('/', $s);
+    }
 
-
+    /**
+     * Obtiene el nombre de la variable declarada en la ruta almacenada en la api
+     *
+     * @param string $s
+     * @return void
+     */
+    private static function getNameVariable(string $s) {
+        $pattern = '/' . '\{([a-zA-Z_]+[0-9]*[a-zA-Z_])\}' . '/';
+        preg_match($pattern, $s, $match);
+        return $match[1];
+    }
 
     /**
      * Comprobamos si la url solicitada por la request contiene valores variables
@@ -42,9 +100,9 @@ class ProcessRequest {
      * @param Request $request
      * @return bool
      */
-    private static function containsVariables(Request $request):bool {
+    private static function containsVariables(string $routeRequest):bool {
         $patternVariable = '/' . '[a-z]+\/((\d+)\/?|[a-z]+\/(\d+)\/?)$' . '/';
-        if(preg_match($patternVariable, $request->uri)) {
+        if(preg_match($patternVariable, $routeRequest)) {
             return true;
         }else {
             return false;
@@ -57,9 +115,9 @@ class ProcessRequest {
      * @param Request $request
      * @return void
      */
-    private static function getVariableValue(Request $request) {
+    private static function getVariableValue(string $routeRequest) {
         $patternVariable = '/' . '^[a-z]+\/(\d+)\/?$|^[a-z]+\/[a-z]+\/(\d+)\/?$' . '/';
-        if(preg_match($patternVariable, $request->uri, $match)) {
+        if(preg_match($patternVariable, $routeRequest, $match)) {
             foreach($match as $x) {
                 if(is_numeric($x)) {
                     return $x;
