@@ -129,92 +129,22 @@ class Routes {
         return $newArray;
     }
 
-    /**
-     * Verifica si la ruta contiene valores variables en ciertas partes de su estructura
-     *
-     * @param string $route
-     * @return boolean
-     */
-    private static function checkRouteIsVariable(string $route):bool {
-        $pattern = '/' . '\{[a-zA-Z_]+[a-zA-Z0-9_]+\}' . '/';
-        if(preg_match($pattern, $route)) {
-            return true;
-        }else {
-            return false;
-        }
-    }
-
-    public static function getThePossibleRoutes(string $methodHttpRequest, string $routeRequest) {
-        if(!self::checkRouteIsVariable($routeRequest)) {
-            $array = [];
-            foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_NO_VARIABLES] as $r) {
-                array_push($array, $r['route']);
+    public static function getControllerAndMethod(string $methodHttp, $route, bool $isVariable) {
+        if($isVariable) {
+            $routes = self::$routes[$methodHttp][self::NAME_ROUTES_VARIABLES];
+            foreach($routes as $x) {
+                if($x['route'] === $route) {
+                    return $x['controllerAndMethod'];
+                }
             }
-            return $array;
         }else {
-            $array = [];
-            foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_VARIABLES] as $r) {
-                array_push($array, $r['route']);
-            }
-            return $array;
-        }
-    }
-
-    public static function getControllerAndMethodRouteRequest(string $methodHttpRequest, string $routeRequest) {
-        if(in_array($routeRequest, self::getAllRoutesNoVariables($methodHttpRequest))) {
-            return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_NO_VARIABLES, $routeRequest);
-        }else {
-            return self::compareRequestRouteWithVariableRoutes($methodHttpRequest, self::getAllRoutesVariables($methodHttpRequest), $routeRequest);
-        }
-    }
-
-    private static function compareRequestRouteWithVariableRoutes(string $methodHttpRequest, array $allRoutesVariables, string $routeRequest) {
-        $arrayRouteRequest = explode('/', $routeRequest);
-        foreach($allRoutesVariables as $routeVariable) {
-            $arrayRouteVariable = explode('/', $routeVariable);
-
-            if(count(array_intersect($arrayRouteVariable, $arrayRouteRequest)) == 2) {
-
-                $arrayContentMethodAndController = self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $routeVariable);
-
-                $arrayContentMethodAndController['variables'] = self::getVariableInRouteRequest($arrayRouteRequest, $arrayRouteVariable);
-
-                return $arrayContentMethodAndController;
-            }else if(count(array_intersect($arrayRouteVariable, $arrayRouteRequest)) == 1) {
-
-                $arrayContentMethodAndController = self::getNameControllerAndMethod($methodHttpRequest, $routeVariable);
-
-                $arrayContentMethodAndController['variables'] = self::getVariableInRouteRequest($arrayRouteRequest, $arrayRouteVariable);
-
-                return $arrayContentMethodAndController;
+            $routes = self::$routes[$methodHttp][self::NAME_ROUTES_NO_VARIABLES];
+            foreach($routes as $x) {
+                if($x['route'] === $route) {
+                    return $x['controllerAndMethod'];
+                }
             }
         }
-    }
-
-    /**
-     * Obtiene el nombre del controlador y metodo solicitado en la request, no acepta valores constantes solo urls con variables.
-     * clientes/delete/1 NO
-     * clientes/delete/{id} SI
-     *
-     * @param string $methodHttpRequest
-     * @param string $route
-     * @return array
-     */
-    private static function getNameControllerAndMethod(string $methodHttpRequest, string $route):array {
-        return self::getRouteData($methodHttpRequest, self::NAME_ROUTES_VARIABLES, $route);
-    }
-
-    /**
-     * Obtiene el valor variable en la url enviada en la request
-     *
-     * @param array $arrayRouteRequest
-     * @param array $arrayRouteVariable
-     * @return string
-     */
-    private static function getVariableInRouteRequest(array $arrayRouteRequest, array $arrayRouteVariable):string {
-        $arrayDiff = array_diff($arrayRouteRequest, $arrayRouteVariable);
-        $variableValue = array_pop($arrayDiff);
-        return $variableValue;
     }
 
     /**
@@ -223,7 +153,7 @@ class Routes {
      * @param string $methodHttpRequest
      * @return array
      */
-    private static function getAllRoutesVariables(string $methodHttpRequest):array {
+    public static function getAllRoutesVariables(string $methodHttpRequest):array {
         $array = [];
         foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_VARIABLES] as $r) {
             array_push($array, $r['route']);
@@ -237,7 +167,7 @@ class Routes {
      * @param string $methodHttpRequest
      * @return array
      */
-    private static function getAllRoutesNoVariables(string $methodHttpRequest):array {
+    public static function getAllRoutesNoVariables(string $methodHttpRequest):array {
         $array = [];
         foreach(self::$routes[strtoupper($methodHttpRequest)][self::NAME_ROUTES_NO_VARIABLES] as $r) {
             array_push($array, $r['route']);
