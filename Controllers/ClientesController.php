@@ -14,7 +14,8 @@ class ClientesController {
     }
 
     public function getClientById($id) {
-
+        $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(ClientesRepository::getById($id)));
+        return $r;
     }
 
     public function registerClient($req) {
