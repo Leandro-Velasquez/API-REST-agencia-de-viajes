@@ -16,7 +16,11 @@ class ClientesRepository {
     }
 
     public static function getById($id) {
-
+        $sql = 'SELECT * FROM ' . self::$table . ' WHERE id=:id';
+        $stmt = DB::connect()->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function insert(array $data) {
