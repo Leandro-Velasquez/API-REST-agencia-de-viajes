@@ -42,6 +42,16 @@ class ClientesRepository {
         $stmt = DB::connect()->query($sql);
         return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
     }
+
+    public static function delete($id) {
+        $sql = 'DELETE FROM ' . self::$table . ' WHERE id=:id';
+        $stmt = DB::connect()->prepare($sql);
+
+        $stmt->bindParam(':id', $id);
+
+        $r = $stmt->execute();
+        return $r;
+    }
 }
 
 ?>
