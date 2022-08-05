@@ -2,8 +2,11 @@
 
 namespace Controllers;
 
+use Class\Static\ErrorMessage;
 use Class\Static\JsonConverter;
 use Class\Static\Response;
+use Class\Static\StatusCode;
+use InvalidArgumentException;
 use Repository\ClientesRepository;
 
 class ClientesController {
@@ -14,8 +17,13 @@ class ClientesController {
     }
 
     public function getClientById($id) {
-        $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(ClientesRepository::getById($id)));
+        if($data = ClientesRepository::getById($id)) {
+            $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson($data));
         return $r;
+        }else {
+            StatusCode::setStatusCode(404);
+            throw new InvalidArgumentException(ErrorMessage::ERROR_RECURSO_INEXISTENTE);
+        }
     }
 
     public function registerClient($req) {
