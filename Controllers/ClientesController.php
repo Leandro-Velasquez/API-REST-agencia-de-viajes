@@ -24,5 +24,12 @@ class ClientesController {
         $r = new Response(array('Content-Type:application/json'), $statusCode, JsonConverter::convertToJson(array('id'=>$id)));
         return $r;
     }
+
+    public function deleteClient($id) {
+        if(ClientesRepository::delete($id)) {
+            $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$id)));
+            return $r;
+        }
+    }
 }
 ?>
