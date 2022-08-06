@@ -39,5 +39,14 @@ class ClientesController {
             return $r;
         }
     }
+
+    public function updateClientById($req) {
+        if(ClientesRepository::update($req->body)) {
+            $r = new Response(array(), 200, array('id'=>$req->body['id']));
+            return $r;
+        }else {
+            throw new InvalidArgumentException('Hubo un problema al actualizar los datos, vuelva a intentarlo');
+        }
+    }
 }
 ?>
