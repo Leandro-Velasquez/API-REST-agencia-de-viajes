@@ -41,8 +41,12 @@ class ClientesController {
     }
 
     public function updateClientById($req) {
-        if(ClientesRepository::update($req->body)) {
-            $r = new Response(array(), 200, array('id'=>$req->body['id']));
+        $dataDb = ClientesRepository::getById($req->body['id']);
+        $ar = array_diff_key($dataDb, $req->body);
+        $newValues = array_merge($req->body, $ar);
+
+        if(ClientesRepository::update($newValues)) {
+            $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$req->body['id'])));
             return $r;
         }else {
             throw new InvalidArgumentException('Hubo un problema al actualizar los datos, vuelva a intentarlo');
