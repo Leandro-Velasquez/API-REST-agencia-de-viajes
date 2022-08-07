@@ -15,10 +15,9 @@ class ProcessRequest {
             $obj = new $controller;
             if(self::containsVariables($request->uri)) {
                 $response = call_user_func_array(array($obj, $method), array('id'=>$id));
-            }else {
-                $response = call_user_func_array(array($obj, $method), array());
+            }else{
+                $response = call_user_func_array(array($obj, $method), array($request));
             }
-            
             return $response;
         }
     }
