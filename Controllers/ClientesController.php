@@ -22,7 +22,7 @@ class ClientesController {
         return $r;
         }else {
             StatusCode::setStatusCode(404);
-            throw new InvalidArgumentException(ErrorMessage::ERROR_RECURSO_INEXISTENTE);
+            throw new InvalidArgumentException(ErrorMessage::ERROR_GET_RECURSO_INEXISTENTE);
         }
     }
 
@@ -34,22 +34,26 @@ class ClientesController {
     }
 
     public function deleteClient($id) {
-        if(ClientesRepository::delete($id)) {
+        if(ClientesRepository::getById($id)) {
+            ClientesRepository::delete($id);
             $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$id)));
             return $r;
+        }else {
+            StatusCode::setStatusCode(404);
+            throw new InvalidArgumentException(ErrorMessage::ERROR_DELETE_RECURSO_INEXISTENTE);
         }
     }
 
     public function updateClientById($req) {
-        $dataDb = ClientesRepository::getById($req->body['id']);
-        $ar = array_diff_key($dataDb, $req->body);
-        $newValues = array_merge($req->body, $ar);
-
-        if(ClientesRepository::update($newValues)) {
+        if($dataDb = ClientesRepository::getById($req->body['id'])) {
+            $ar = array_diff_key($dataDb, $req->body);
+            $newValues = array_merge($req->body, $ar);
+            ClientesRepository::update($newValues);
             $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$req->body['id'])));
             return $r;
         }else {
-            throw new InvalidArgumentException('Hubo un problema al actualizar los datos, vuelva a intentarlo');
+            StatusCode::setStatusCode(404);
+            throw new InvalidArgumentException(ErrorMessage::ERROR_UPDATE_RECURSO_INEXISTENTE);
         }
     }
 }
