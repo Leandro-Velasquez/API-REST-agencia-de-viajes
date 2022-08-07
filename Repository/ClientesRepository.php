@@ -4,6 +4,7 @@ namespace Repository;
 
 use Class\Static\DB;
 use PDO;
+use PDOException;
 
 class ClientesRepository {
 
@@ -20,7 +21,7 @@ class ClientesRepository {
         $stmt = DB::connect()->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public static function insert(array $data) {
@@ -51,6 +52,19 @@ class ClientesRepository {
 
         $r = $stmt->execute();
         return $r;
+    }
+
+    public static function update(array $data) {
+        extract($data);
+        $sql = 'UPDATE ' . self::$table . ' SET nombre=:n, apellido=:a, dni=:d, id_vuelo=:iv WHERE id=:id';
+        $stmt = DB::connect()->prepare($sql);
+        $stmt->bindParam(':n', $nombre);
+        $stmt->bindParam(':a', $apellido);
+        $stmt->bindParam(':d', $dni);
+        $stmt->bindParam(':iv', $id_vuelo);
+        $stmt->bindParam(':id', $id);
+
+        return $stmt->execute();
     }
 }
 
