@@ -66,6 +66,15 @@ class ClientesRepository {
 
         return $stmt->execute();
     }
+
+    public static function getColumnNames() {
+        $stmt = DB::connect()->query('SHOW COLUMNS FROM ' . self::$table);
+        $columsNames = [];
+        foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $x) {
+            array_push($columsNames, $x['Field']);
+        }
+        return $columsNames;
+    }
 }
 
 ?>
