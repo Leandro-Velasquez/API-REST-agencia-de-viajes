@@ -31,4 +31,21 @@ class RequestValidator {
     public static function checkMethodHttp(string $method) {
         return in_array(strtoupper($method), Routes::getAvailableHttpMethods());
     }
+
+    /**
+     * Comprueba que todas claves del cuerpo de la solicitud coincidan con los nombres de las columnas de la tabla
+     *
+     * @param array $keysBody
+     * @param array $columnsNames
+     * @return boolean
+     */
+    public static function checkBodyKeysWithColumnNames(array $keysBody, array $columnsNames):bool {
+        $checkKeys = true;
+        foreach($keysBody as $key) {
+            if(!in_array($key, $columnsNames)) {
+                $checkKeys = false;
+            }
+        }
+        return $checkKeys;
+    }
 }
