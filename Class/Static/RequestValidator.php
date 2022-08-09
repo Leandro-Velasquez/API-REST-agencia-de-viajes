@@ -48,4 +48,21 @@ class RequestValidator {
         }
         return $checkKeys;
     }
+
+    /**
+     * Obtiene todas las keys invalidas que no coinciden con los nombres de las columnas de la tabla
+     *
+     * @param array $keysBody
+     * @param array $columnsNames
+     * @return array
+     */
+    public static function getInvalidKeys(array $keysBody, array $columnsNames):array {
+        $invalidKeys = [];
+        foreach($keysBody as $key) {
+            if(!in_array($key, $columnsNames)) {
+                array_push($invalidKeys, $key);
+            }
+        }
+        return $invalidKeys;
+    }
 }
