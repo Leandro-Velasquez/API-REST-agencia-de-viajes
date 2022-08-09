@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Class\Static\ErrorMessage;
 use Class\Static\JsonConverter;
+use Class\Static\RequestValidator;
 use Class\Static\Response;
 use Class\Static\StatusCode;
 use InvalidArgumentException;
@@ -45,15 +46,28 @@ class ClientesController {
     }
 
     public function updateClientById($req) {
-        if($dataDb = ClientesRepository::getById($req->body['id'])) {
-            $ar = array_diff_key($dataDb, $req->body);
-            $newValues = array_merge($req->body, $ar);
-            ClientesRepository::update($newValues);
-            $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$req->body['id'])));
-            return $r;
+        $columsNames = ClientesRepository::getColumnNames();
+        $keysBody = array_keys($req->body);
+        if(isset($req->body['id'])) {
+            $invalidKeys = RequestValidator::getInvalidKeys($keysBody, $columsNames);
+            if(count($invalidKeys) == 0) {
+                if($dataDb = ClientesRepository::getById($req->body['id'])) {
+                    $ar = array_diff_key($dataDb, $req->body);
+                    $newValues = array_merge($req->body, $ar);
+                    ClientesRepository::update($newValues);
+                    $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$req->body['id'])));
+                    return $r;
+                }else {
+                    StatusCode::setStatusCode(404);
+                    throw new InvalidArgumentException(ErrorMessage::ERROR_UPDATE_RECURSO_INEXISTENTE);
+                }
+            }else {
+                StatusCode::setStatusCode(404);
+                throw new InvalidArgumentException(ErrorMessage::ERROR_KEYS_INVALIDAS);
+            }
         }else {
             StatusCode::setStatusCode(404);
-            throw new InvalidArgumentException(ErrorMessage::ERROR_UPDATE_RECURSO_INEXISTENTE);
+            throw new InvalidArgumentException(ErrorMessage::ERROR_ID_NO_PROPORCIONADO);
         }
     }
 }
