@@ -4,6 +4,8 @@ namespace Class\Static;
 
 abstract class ErrorMessage {
 
+    const ERROR_ID_NO_PROPORCIONADO = 'Necesita introducir un id en el cuerpo de la solicitud';
+    const ERROR_KEYS_INVALIDAS = 'Las claves proporcionadas son invalidas';
     const ERROR_RUTA_NO_DEFINIDA = 'La ruta no se encuentra definida en la api';
     const ERROR_METODO_NO_DEFINIDO = 'El metodo no esta definido en la api';
 
