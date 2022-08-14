@@ -15,9 +15,10 @@ class ProcessRequest {
             $obj = new $controller;
             if(self::containsVariables($request->uri)) {
                 $response = call_user_func_array(array($obj, $method), array('id'=>$id));
-            }else{
+            }else {
                 $response = call_user_func_array(array($obj, $method), array($request));
             }
+            
             return $response;
         }
     }
@@ -28,6 +29,10 @@ class ProcessRequest {
                 return true;
             }
             else {
+                if(!self::checkIdInUrl($request->methodHttp, $request->uri)) {
+                    StatusCode::setStatusCode(404);
+                    throw new InvalidArgumentException('Debe proporcionar un id en la url');
+                }
                 StatusCode::setStatusCode(501);
                 throw new InvalidArgumentException('La ruta no se encuentra definida en la api');
             }
@@ -123,6 +128,25 @@ class ProcessRequest {
                 }
             }
         }
+    }
+
+    /**
+     * Comprueba si pasamos un id en la url
+     *
+     * @param string $methodHttp
+     * @param string $routeRequest
+     * @return boolean
+     */
+    private static function checkIdInUrl(string $methodHttp, string $routeRequest):bool {
+        $allRoutes = Routes::getAllRoutesHttpMethod($methodHttp);
+        $arrRouteRequest = explode('/', $routeRequest);
+        foreach($allRoutes as $r) {
+            $a = explode('/', $r);
+            if(count(array_diff($arrRouteRequest, $a)) == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 ?>
