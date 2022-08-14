@@ -174,5 +174,9 @@ class Routes {
         }
         return $array;
     }
+
+    public static function getAllRoutesHttpMethod(string $methodHttp) {
+        return array_merge(self::getAllRoutesNoVariables($methodHttp), self::getAllRoutesVariables($methodHttp));
+    }
 }
 ?>
