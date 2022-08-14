@@ -7,13 +7,25 @@ use Class\Static\JsonConverter;
 use Class\Static\RequestValidator;
 use Class\Static\Response;
 use Class\Static\StatusCode;
+use Exception;
 use InvalidArgumentException;
 use Repository\ClientesRepository;
+use Service\ClientesService;
 
 class ClientesController {
 
+    private ClientesService $clientesService;
+
+    public function __construct()
+    {
+        $this->clientesService = new ClientesService;
+    }
+
     public function getAllClients() {
-        $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(ClientesRepository::getAll()));
+        $r = new Response;
+        $r->setHeaders(array('Content-Type:application/json'));
+        $r->setBody(JsonConverter::convertToJson(ClientesRepository::getAll()));
+        $r->setStatusCode(200);
         return $r;
     }
 
@@ -35,39 +47,38 @@ class ClientesController {
     }
 
     public function deleteClient($id) {
-        if(ClientesRepository::getById($id)) {
-            ClientesRepository::delete($id);
-            $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$id)));
-            return $r;
-        }else {
-            StatusCode::setStatusCode(404);
-            throw new InvalidArgumentException(ErrorMessage::ERROR_DELETE_RECURSO_INEXISTENTE);
+        try {
+            $this->clientesService->deleteById($id);
+
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('id'=>$id)));
+            $response->setStatusCode(200);
+            return $response;
+        }catch(Exception $e) {
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('error'=>$e->getMessage())));
+            $response->setStatusCode(404);
+            return $response;
         }
     }
 
     public function updateClientById($req) {
-        $columsNames = ClientesRepository::getColumnNames();
-        $keysBody = array_keys($req->body);
-        if(isset($req->body['id'])) {
-            $invalidKeys = RequestValidator::getInvalidKeys($keysBody, $columsNames);
-            if(count($invalidKeys) == 0) {
-                if($dataDb = ClientesRepository::getById($req->body['id'])) {
-                    $ar = array_diff_key($dataDb, $req->body);
-                    $newValues = array_merge($req->body, $ar);
-                    ClientesRepository::update($newValues);
-                    $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson(array('id'=>$req->body['id'])));
-                    return $r;
-                }else {
-                    StatusCode::setStatusCode(404);
-                    throw new InvalidArgumentException(ErrorMessage::ERROR_UPDATE_RECURSO_INEXISTENTE);
-                }
-            }else {
-                StatusCode::setStatusCode(404);
-                throw new InvalidArgumentException(ErrorMessage::ERROR_KEYS_INVALIDAS);
-            }
-        }else {
-            StatusCode::setStatusCode(404);
-            throw new InvalidArgumentException(ErrorMessage::ERROR_ID_NO_PROPORCIONADO);
+        try {
+            $this->clientesService->updateById($req->body);
+
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('id'=>$req->body['id'])));
+            $response->setStatusCode(200);
+            return $response;
+        }catch(Exception $e) {
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('error'=>$e->getMessage())));
+            $response->setStatusCode(404);
+            return $response;
         }
     }
 }
