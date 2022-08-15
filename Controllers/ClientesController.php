@@ -4,7 +4,6 @@ namespace Controllers;
 
 use Class\Static\ErrorMessage;
 use Class\Static\JsonConverter;
-use Class\Static\RequestValidator;
 use Class\Static\Response;
 use Class\Static\StatusCode;
 use Exception;
@@ -39,11 +38,22 @@ class ClientesController {
         }
     }
 
-    public function registerClient($req) {
-        $id = ClientesRepository::insert($req->body)?ClientesRepository::lastId():null;
-        $statusCode = $id ? 201: 501;
-        $r = new Response(array('Content-Type:application/json'), $statusCode, JsonConverter::convertToJson(array('id'=>$id)));
-        return $r;
+    public function registerClient($data) {
+        try {
+            $id = $this->clientesService->create($data);
+
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('id'=>$id)));
+            $response->setStatusCode(201);
+            return $response;
+        }catch(Exception $e) {
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('error'=>$e->getMessage())));
+            $response->setStatusCode(404);
+            return $response;
+        }
     }
 
     public function deleteClient($id) {
