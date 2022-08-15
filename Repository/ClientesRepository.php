@@ -84,7 +84,22 @@ class ClientesRepository {
             and COLUMN_KEY in ('UNI')
         SQL;
         $stmt = DB::connect()->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $columnsUnique = [];
+        foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $x) {
+            array_push($columnsUnique, $x['COLUMN_NAME']);
+        }
+        return $columnsUnique;
+    }
+
+    public static function searchValueDniColumn($value) {
+        $tableName = self::$table;
+        $sql = <<<SQL
+            SELECT dni FROM $tableName WHERE dni=:d
+        SQL;
+        $stmt = DB::connect()->prepare($sql);
+        $stmt->bindParam(':d', $value);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 
