@@ -75,6 +75,17 @@ class ClientesRepository {
         }
         return $columsNames;
     }
+
+    public static function getColumnsUnique() {
+        $tableName = self::$table;
+        $sql = <<<SQL
+            SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME='$tableName' 
+            and COLUMN_KEY in ('UNI')
+        SQL;
+        $stmt = DB::connect()->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>
