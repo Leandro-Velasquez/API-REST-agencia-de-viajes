@@ -15,7 +15,10 @@ try {
     $res = ProcessRequest::process($req);
     $res->send();
 }catch(Exception $e) {
-    $res = new Response(array('Content-Type:application/json'), StatusCode::getStatusCode(), JsonConverter::convertToJson(array('error'=>$e->getMessage())));
-    $res->send();
+    $response = new Response;
+    $response->setHeaders(array('Content-Type:application/json'));
+    $response->setBody(JsonConverter::convertToJson(array('error'=>$e->getMessage())));
+    $response->setStatusCode(StatusCode::getStatusCode());
+    $response->send();
 }
 ?>
