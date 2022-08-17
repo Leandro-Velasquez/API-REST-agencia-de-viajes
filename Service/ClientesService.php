@@ -2,6 +2,7 @@
 namespace Service;
 
 use Class\Static\ErrorMessage;
+use Class\Static\Request;
 use Class\Static\RequestValidator;
 use InvalidArgumentException;
 use Repository\ClientesRepository;
@@ -14,6 +15,17 @@ class ClientesService {
 
     public function getById($id) {
         
+    }
+
+    public function create($data) {
+        $columsNames = ClientesRepository::getColumnNames();
+        $columnsUnique = ClientesRepository::getColumnsUnique();
+        RequestValidator::validateDataCreateResource($data, $columsNames, $columnsUnique);
+        if(ClientesRepository::insert($data)) {
+            return ClientesRepository::lastId();
+        }else {
+            throw new InvalidArgumentException('Hubo un problema al crear el recurso');
+        }
     }
 
     public function deleteById($id) {
