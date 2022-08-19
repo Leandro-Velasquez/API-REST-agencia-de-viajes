@@ -2,6 +2,9 @@
 
 namespace Class\Static;
 
+use InvalidArgumentException;
+use Repository\ClientesRepository;
+
 class RequestValidator {
 
     /**
@@ -64,5 +67,33 @@ class RequestValidator {
             }
         }
         return $invalidKeys;
+    }
+
+    public static function validateOperationsCrud($info, $columnsNames) {
+        if(isset($info['id'])) {
+            if(count(self::getInvalidKeys(array_keys($info), $columnsNames)) == 0) {
+                return true;
+            }else {
+                $invalidKeys = self::getInvalidKeys(array_keys($info), $columnsNames);
+                throw new InvalidArgumentException('Se encontraron keys invalidas en el cuerpo de la solicitud: '. implode(', ', $invalidKeys));
+            }
+        }else {
+            throw new InvalidArgumentException('Debe proporcionar un id en el cuerpo de la solicitud');
+        }
+    }
+
+    public static function validateDataCreateResource($data, $columnsNames, $columnsUnique=null) {
+        if(count(self::getInvalidKeys(array_keys($data), $columnsNames)) == 0) {
+            if(!empty($columnsUnique)) {
+                if(!ClientesRepository::searchValueDniColumn($data['dni'])) {
+                    return true;
+                }else {
+                    throw new InvalidArgumentException('Los valores ingresados en el/los campo/s ' . implode(',', $columnsUnique) . ' ya se encuentran registrados');
+                }
+            }
+        }else {
+            $invalidKeys = self::getInvalidKeys(array_keys($data), $columnsNames);
+            throw new InvalidArgumentException('Se encontraron keys invalidas en el cuerpo de la solicitud: '. implode(', ', $invalidKeys));
+        }
     }
 }
