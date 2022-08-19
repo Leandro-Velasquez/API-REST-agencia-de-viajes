@@ -4,6 +4,7 @@ namespace Service;
 use Class\Static\ErrorMessage;
 use Class\Static\Request;
 use Class\Static\RequestValidator;
+use Class\Static\Response;
 use InvalidArgumentException;
 use Repository\ClientesRepository;
 
@@ -14,7 +15,11 @@ class ClientesService {
     }
 
     public function getById($id) {
-        
+        if($data = ClientesRepository::getById($id)) {
+            return $data;
+        }else {
+            throw new InvalidArgumentException('El recurso con id ' . $id . ' no se encuentra registrado en la base de datos');
+        }
     }
 
     public function create($data) {
