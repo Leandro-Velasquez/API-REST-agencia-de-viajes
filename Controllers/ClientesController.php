@@ -29,12 +29,19 @@ class ClientesController {
     }
 
     public function getClientById($id) {
-        if($data = ClientesRepository::getById($id)) {
-            $r = new Response(array('Content-Type:application/json'), 200, JsonConverter::convertToJson($data));
-        return $r;
-        }else {
-            StatusCode::setStatusCode(404);
-            throw new InvalidArgumentException(ErrorMessage::ERROR_GET_RECURSO_INEXISTENTE);
+        try {
+            $data = $this->clientesService->getById($id);
+            $response = new Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson($data));
+            $response->setStatusCode(200);
+            return $response;
+        }catch(Exception $e) {
+            $response = New Response;
+            $response->setHeaders(array('Content-Type:application/json'));
+            $response->setBody(JsonConverter::convertToJson(array('error'=>$e->getMessage())));
+            $response->setStatusCode(404);
+            return $response;
         }
     }
 
