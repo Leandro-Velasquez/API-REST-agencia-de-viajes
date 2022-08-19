@@ -16,7 +16,11 @@ class ProcessRequest {
             if(self::containsVariables($request->uri)) {
                 $response = call_user_func_array(array($obj, $method), array('id'=>$id));
             }else {
-                $response = call_user_func_array(array($obj, $method), array($request));
+                if(isset($request->body)) {
+                    $response = call_user_func_array(array($obj, $method), array($request->body));
+                }else {
+                    $response = call_user_func_array(array($obj, $method), array());
+                }
             }
             
             return $response;
