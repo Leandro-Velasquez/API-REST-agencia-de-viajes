@@ -11,7 +11,7 @@ use Repository\ClientesRepository;
 class ClientesService {
 
     public function getAllClients() {
-
+        return ClientesRepository::getAll();
     }
 
     public function getById($id) {
