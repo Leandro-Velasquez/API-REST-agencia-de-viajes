@@ -2,12 +2,9 @@
 
 namespace Controllers;
 
-use Class\Static\ErrorMessage;
 use Class\Static\JsonConverter;
 use Class\Static\Response;
-use Class\Static\StatusCode;
 use Exception;
-use InvalidArgumentException;
 use Repository\ClientesRepository;
 use Service\ClientesService;
 
@@ -21,11 +18,11 @@ class ClientesController {
     }
 
     public function getAllClients() {
-        $r = new Response;
-        $r->setHeaders(array('Content-Type:application/json'));
-        $r->setBody(JsonConverter::convertToJson(ClientesRepository::getAll()));
-        $r->setStatusCode(200);
-        return $r;
+        $response = new Response;
+        $response->setHeaders(array('Content-Type:application/json'));
+        $response->setBody(JsonConverter::convertToJson($this->clientesService->getAllClients()));
+        $response->setStatusCode(200);
+        return $response;
     }
 
     public function getClientById($id) {
